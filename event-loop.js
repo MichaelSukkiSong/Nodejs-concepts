@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-// all the functions from crypto will be offloaded automatically by the eventloop to the threadpool. we are going to test that here.
+// all the functions from crypto will be offloaded automatically by the eventloop to the threadpool(if they are inside an eventloop of course). we are going to test that here.
 const crypto = require("crypto");
 // To know the amount of time passed doing the calculation below
 const start = Date.now();
@@ -8,6 +8,7 @@ const start = Date.now();
 process.env.UV_THREADPOOL_SIZE = 3;
 
 // To simulate some aspects of the event loop, the following example was used
+// these are not inside a event loop yet.
 setTimeout(() => console.log("Timer 1 finished"), 0);
 setImmediate(() => console.log("Immediate 1 finished"));
 
@@ -15,6 +16,7 @@ fs.readFile("test-file.txt", () => {
   console.log("I/O finished");
   console.log("-----------------");
 
+  // now let's see them inside a event loop
   setTimeout(() => console.log("Timer 2 finished"), 0);
   setTimeout(() => console.log("Timer 3 finished"), 3000);
   setImmediate(() => console.log("Immediate 2 finished"));
